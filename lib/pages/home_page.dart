@@ -68,12 +68,49 @@ class _MyHomePageState extends State<MyHomePage> {
               itemBuilder: (context, index) {
                 return ListTile(
                   leading: Icon(Icons.videogame_asset_outlined),
-                  title: Text(jogos[index].nJogo),
-                  subtitle: Text(jogos[index].nEmpresa),
-                  trailing: Text(jogos[index].anoJogo.toString()),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
+                  title: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Jogo: ${jogos[index].nJogo}'),
+                      Text('Empresa: ${jogos[index].nEmpresa}'),
+                      Text('Ano de Lançamento: ${jogos[index].anoJogo}'),
+                    ],
+                  ),
+                  trailing: IconButton(
+                    icon: const Icon(Icons.delete_outline),
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: const Text('Deletar Jogo'),
+                          content: const Text(
+                            'Tem certeza que deseja deletar este jogo?',
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.of(context).pop(),
+                              child: const Text('Cancelar'),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                                _deleteJogo(index);
+                              },
+                              child: const Text('Deletar'),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
                 );
               },
             ),
+
       floatingActionButton: FloatingActionButton(
         onPressed: _adicionarJogo,
         tooltip: 'Adicionar jogo',
@@ -95,5 +132,11 @@ class _MyHomePageState extends State<MyHomePage> {
           jogos.clear();
           _getJogos();
         });
+  }
+
+  void _deleteJogo(int index) {
+    setState(() {
+      jogos.removeAt(index);
+    });
   }
 }
