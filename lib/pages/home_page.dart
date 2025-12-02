@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:lista_de_jogos/models/jogos_model.dart';
+import 'package:lista_de_jogos/pages/jogo_edit_page.dart';
 import 'package:lista_de_jogos/pages/jogo_form_page.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -35,14 +36,20 @@ class _MyHomePageState extends State<MyHomePage> {
     );
     var response = await dio.get('/lista_jogos');
     var listaData = response.data as List;
+
+    jogos.clear();
+
     for (var data in listaData) {
-      var jogo = Jogos(
-        nJogo: data['nome'],
-        nEmpresa: data['empresa'],
-        anoJogo: data['ano'],
+      jogos.add(
+        Jogos(
+          id: data['id'],
+          nJogo: data['nome'],
+          nEmpresa: data['empresa'],
+          anoJogo: data['ano'],
+        ),
       );
-      jogos.add(jogo);
     }
+
     setState(() {
       isLoading = false;
     });
@@ -58,7 +65,6 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-
         title: Row(children: [Text(widget.title), SizedBox(width: 8)]),
       ),
       body: isLoading
@@ -95,7 +101,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               onPressed: () => Navigator.of(context).pop(),
                               child: const Text('Cancelar'),
                             ),
-                            TextButton(
+                            ElevatedButton(
                               onPressed: () {
                                 Navigator.of(context).pop();
                                 _deleteJogo(index);
@@ -107,10 +113,22 @@ class _MyHomePageState extends State<MyHomePage> {
                       );
                     },
                   ),
+                  onTap: () {
+                    Navigator.of(context)
+                        .push(
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                JogoEditPage(jogo: jogos[index]),
+                          ),
+                        )
+                        .then((_) {
+                          jogos.clear();
+                          _getJogos();
+                        });
+                  },
                 );
               },
             ),
-
       floatingActionButton: FloatingActionButton(
         onPressed: _adicionarJogo,
         tooltip: 'Adicionar jogo',
@@ -134,9 +152,28 @@ class _MyHomePageState extends State<MyHomePage> {
         });
   }
 
-  void _deleteJogo(int index) {
-    setState(() {
-      jogos.removeAt(index);
-    });
+  void _deleteJogo(int index) async {
+    final jogo = jogos[index];
+    try {
+      var dio = Dio(
+        BaseOptions(
+          connectTimeout: Duration(seconds: 30),
+          baseUrl: 'https://6912666252a60f10c8218ad9.mockapi.io/api/v1',
+        ),
+      );
+      await dio.delete('/lista_jogos/${jogo.id}'); // DELETE usando o ID
+
+      setState(() {
+        jogos.removeAt(index);
+      });
+
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Jogo deletado com sucesso!')));
+    } catch (e) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Erro ao deletar jogo: $e')));
+    }
   }
 }
