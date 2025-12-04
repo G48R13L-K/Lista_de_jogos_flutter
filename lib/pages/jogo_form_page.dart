@@ -55,8 +55,11 @@ class _JogoFormPageState extends State<JogoFormPage> {
               child: TextFormField(
                 controller: controllerNome,
                 decoration: InputDecoration(
-                  border: OutlineInputBorder(),
                   labelText: "Digite o nome do jogo:",
+                  icon: Icon(Icons.videogame_asset),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.grey),
+                  ),
                 ),
                 validator: (value) => _validateNome(),
               ),
@@ -66,8 +69,11 @@ class _JogoFormPageState extends State<JogoFormPage> {
               child: TextFormField(
                 controller: controllerEmpresa,
                 decoration: InputDecoration(
-                  border: OutlineInputBorder(),
                   labelText: "Digite o nome da empresa:",
+                  icon: Icon(Icons.business),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.grey),
+                  ),
                 ),
                 validator: (value) => _validateEmpresa(),
               ),
@@ -77,13 +83,19 @@ class _JogoFormPageState extends State<JogoFormPage> {
               child: TextFormField(
                 controller: controllerAno,
                 decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: "Digite o ano:",
+                  labelText: 'Ano de Lançamento',
+                  filled: true,
+                  icon: Icon(Icons.calendar_today),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.grey),
+                  ),
                 ),
                 validator: (value) => _validateAno(),
-                keyboardType: TextInputType.number,
+                readOnly: true,
+                onTap: _selectData,
               ),
             ),
+
             ElevatedButton.icon(
               onPressed: isSaving ? null : () => _salvarJogo(context),
               label: Text(isSaving ? "Salvando..." : "Salvar jogo"),
@@ -189,6 +201,20 @@ class _JogoFormPageState extends State<JogoFormPage> {
           isSaving = false;
         });
       }
+    }
+  }
+
+  Future<void> _selectData() async {
+    DateTime? _ano = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(1950),
+      lastDate: DateTime.now(),
+    );
+    if (_ano != null) {
+      setState(() {
+        controllerAno.text = _ano.year.toString();
+      });
     }
   }
 }

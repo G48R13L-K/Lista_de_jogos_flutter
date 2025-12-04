@@ -70,30 +70,77 @@ class _JogoEditPageState extends State<JogoEditPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Editar Jogo'),
-        actions: [IconButton(icon: Icon(Icons.save), onPressed: _salvarEdicao)],
-      ),
+      appBar: AppBar(title: Text('Editar Jogo')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            TextField(
-              controller: _nomeController,
-              decoration: InputDecoration(labelText: 'Nome do Jogo'),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TextField(
+                controller: _nomeController,
+                decoration: InputDecoration(
+                  labelText: 'Nome do Jogo',
+                  icon: Icon(Icons.videogame_asset),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.grey),
+                  ),
+                ),
+              ),
             ),
-            TextField(
-              controller: _empresaController,
-              decoration: InputDecoration(labelText: 'Empresa'),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TextField(
+                controller: _empresaController,
+                decoration: InputDecoration(
+                  labelText: 'Empresa',
+                  icon: Icon(Icons.business),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.grey),
+                  ),
+                ),
+              ),
             ),
-            TextField(
-              controller: _anoController,
-              decoration: InputDecoration(labelText: 'Ano de Lançamento'),
-              keyboardType: TextInputType.number,
+
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TextField(
+                controller: _anoController,
+                decoration: InputDecoration(
+                  labelText: 'Ano de Lançamento',
+                  filled: true,
+                  icon: Icon(Icons.calendar_today),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.grey),
+                  ),
+                ),
+                readOnly: true,
+                onTap: _selectData,
+              ),
+            ),
+
+            ElevatedButton.icon(
+              onPressed: () => _salvarEdicao(),
+              label: Text('Salvar'),
+              icon: Icon(Icons.save_outlined),
             ),
           ],
         ),
       ),
     );
+  }
+
+  Future<void> _selectData() async {
+    DateTime? _ano = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(1950),
+      lastDate: DateTime.now(),
+    );
+    if (_ano != null) {
+      setState(() {
+        _anoController.text = _ano.year.toString();
+      });
+    }
   }
 }
