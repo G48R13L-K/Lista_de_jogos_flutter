@@ -15,6 +15,8 @@ class _JogoFormPageState extends State<JogoFormPage> {
   late TextEditingController controllerNome;
   late TextEditingController controllerEmpresa;
   late TextEditingController controllerAno;
+  late TextEditingController controllerPlataforma;
+  late TextEditingController controllerNota;
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
   bool isSaving = false; // Para desabilitar o botão durante salvamento
 
@@ -23,12 +25,16 @@ class _JogoFormPageState extends State<JogoFormPage> {
     controllerNome = TextEditingController();
     controllerEmpresa = TextEditingController();
     controllerAno = TextEditingController();
+    controllerPlataforma = TextEditingController();
+    controllerNota = TextEditingController();
     super.initState();
 
     if (mounted && widget.jogo != null) {
       var jogo = widget.jogo!;
       controllerNome.text = jogo.nJogo;
       controllerEmpresa.text = jogo.nEmpresa;
+      controllerPlataforma.text = jogo.nPlataforma;
+      controllerNota.text = jogo.notaJogo.toString();
       controllerAno.text = jogo.anoJogo
           .toString(); // Converta para string para o controller
     }
@@ -38,7 +44,9 @@ class _JogoFormPageState extends State<JogoFormPage> {
   void dispose() {
     controllerNome.dispose();
     controllerEmpresa.dispose();
+    controllerPlataforma.dispose();
     controllerAno.dispose();
+    controllerNota.dispose();
     super.dispose();
   }
 
@@ -78,6 +86,35 @@ class _JogoFormPageState extends State<JogoFormPage> {
                 validator: (value) => _validateEmpresa(),
               ),
             ),
+
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TextFormField(
+                controller: controllerPlataforma,
+                decoration: InputDecoration(
+                  labelText: "Digite o nome da plataforma utilizada:",
+                  icon: Icon(Icons.personal_video_rounded),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.grey),
+                  ),
+                ),
+              ),
+            ),
+
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TextFormField(
+                controller: controllerNota,
+                decoration: InputDecoration(
+                  labelText: 'Digite a sua nota para o jogo:',
+                  icon: Icon(Icons.swap_vert_outlined),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.grey),
+                  ),
+                ),
+              ),
+            ),
+
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: TextFormField(
@@ -138,6 +175,8 @@ class _JogoFormPageState extends State<JogoFormPage> {
   Future<void> _salvarJogo(BuildContext ctx) async {
     var nomeJogo = controllerNome.text;
     var empresaNome = controllerEmpresa.text;
+    var plataformaJogo = controllerPlataforma.text;
+    var notaParaJogo = int.tryParse(controllerNota.text) ?? 0;
     var anoJogo = int.tryParse(controllerAno.text) ?? 0; // Converta para int
 
     if (formKey.currentState?.validate() == true) {
@@ -158,13 +197,25 @@ class _JogoFormPageState extends State<JogoFormPage> {
           // Adicionar novo jogo (POST)
           response = await dio.post(
             "/lista_jogos",
-            data: {'nome': nomeJogo, 'empresa': empresaNome, 'ano': anoJogo},
+            data: {
+              'nome': nomeJogo,
+              'empresa': empresaNome,
+              'ano': anoJogo,
+              'plataforma': plataformaJogo,
+              'nota': notaParaJogo,
+            },
           );
         } else {
           // Editar jogo existente (PUT)
           response = await dio.put(
             "/lista_jogos/${widget.jogo!.id}",
-            data: {'nome': nomeJogo, 'empresa': empresaNome, 'ano': anoJogo},
+            data: {
+              'nome': nomeJogo,
+              'empresa': empresaNome,
+              'ano': anoJogo,
+              'plataforma': plataformaJogo,
+              'nota': notaParaJogo,
+            },
           );
         }
 

@@ -15,13 +15,20 @@ class _JogoEditPageState extends State<JogoEditPage> {
   late TextEditingController _nomeController;
   late TextEditingController _empresaController;
   late TextEditingController _anoController;
-
+  late TextEditingController _plataformaController;
+  late TextEditingController _notaController;
   @override
   void initState() {
     super.initState();
     // Preencha os campos com os valores atuais
     _nomeController = TextEditingController(text: widget.jogo.nJogo);
     _empresaController = TextEditingController(text: widget.jogo.nEmpresa);
+    _plataformaController = TextEditingController(
+      text: widget.jogo.nPlataforma,
+    );
+    _notaController = TextEditingController(
+      text: widget.jogo.notaJogo.toString(),
+    );
     _anoController = TextEditingController(
       text: widget.jogo.anoJogo.toString(),
     );
@@ -32,6 +39,8 @@ class _JogoEditPageState extends State<JogoEditPage> {
     _nomeController.dispose();
     _empresaController.dispose();
     _anoController.dispose();
+    _plataformaController.dispose();
+    _notaController.dispose();
     super.dispose();
   }
 
@@ -40,6 +49,8 @@ class _JogoEditPageState extends State<JogoEditPage> {
       id: widget.jogo.id,
       nJogo: _nomeController.text,
       nEmpresa: _empresaController.text,
+      nPlataforma: _plataformaController.text,
+      notaJogo: _notaController.text,
       anoJogo: _anoController.text,
     );
 
@@ -56,6 +67,8 @@ class _JogoEditPageState extends State<JogoEditPage> {
           'nome': updatedJogo.nJogo,
           'empresa': updatedJogo.nEmpresa,
           'ano': updatedJogo.anoJogo,
+          'plataforma': updatedJogo.nPlataforma,
+          'nota': updatedJogo.notaJogo,
         },
       );
 
@@ -95,6 +108,32 @@ class _JogoEditPageState extends State<JogoEditPage> {
                 decoration: InputDecoration(
                   labelText: 'Empresa',
                   icon: Icon(Icons.business),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.grey),
+                  ),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TextFormField(
+                controller: _plataformaController,
+                decoration: InputDecoration(
+                  labelText: 'Plataforma Jogada',
+                  icon: Icon(Icons.personal_video_rounded),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.grey),
+                  ),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TextFormField(
+                controller: _notaController,
+                decoration: InputDecoration(
+                  labelText: 'Nota do Jogador',
+                  icon: Icon(Icons.swap_vert_outlined),
                   enabledBorder: OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.grey),
                   ),

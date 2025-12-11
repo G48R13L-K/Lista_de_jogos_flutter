@@ -45,7 +45,10 @@ class _MyHomePageState extends State<MyHomePage> {
           id: data['id'],
           nJogo: data['nome'],
           nEmpresa: data['empresa'],
-          anoJogo: data['ano'],
+          anoJogo: data['ano'].toString(),
+          nPlataforma: data['plataforma'],
+          notaJogo: data['nota'].toString(),
+          isFavorite: data['favorito'] ?? false,
         ),
       );
     }
@@ -73,7 +76,19 @@ class _MyHomePageState extends State<MyHomePage> {
               itemCount: jogos.length,
               itemBuilder: (context, index) {
                 return ListTile(
-                  leading: Icon(Icons.videogame_asset_outlined),
+                  leading: IconButton(
+                    icon: Icon(
+                      jogos[index].isFavorite
+                          ? Icons.favorite
+                          : Icons.favorite_border,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        jogos[index].isFavorite = !jogos[index].isFavorite;
+                      });
+                      _updateFavorite(jogos[index]);
+                    },
+                  ),
                   contentPadding: const EdgeInsets.symmetric(
                     horizontal: 16,
                     vertical: 8,
@@ -83,6 +98,8 @@ class _MyHomePageState extends State<MyHomePage> {
                     children: [
                       Text('Jogo: ${jogos[index].nJogo}'),
                       Text('Empresa: ${jogos[index].nEmpresa}'),
+                      Text('Platafroma:${jogos[index].nPlataforma}'),
+                      Text('Nota do Jogo:${jogos[index].notaJogo}'),
                       Text('Ano de Lançamento: ${jogos[index].anoJogo}'),
                     ],
                   ),
@@ -174,6 +191,23 @@ class _MyHomePageState extends State<MyHomePage> {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text('Erro ao deletar jogo: $e')));
+    }
+  }
+
+  void _updateFavorite(Jogos jogo) async {
+    var dio = Dio(
+      BaseOptions(
+        connectTimeout: Duration(seconds: 30),
+        baseUrl: 'https://6912666252a60f10c8218ad9.mockapi.io/api/v1',
+      ),
+    );
+    try {
+      await dio.put(
+        '/lista_jogos/${jogo.id}',
+        data: {'favorito': jogo.isFavorite},
+      );
+    } catch (e) {
+      //
     }
   }
 }
