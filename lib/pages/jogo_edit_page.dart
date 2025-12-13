@@ -3,7 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:lista_de_jogos/models/jogos_model.dart';
 
 class JogoEditPage extends StatefulWidget {
-  final Jogos jogo; // Recebe o jogo a ser editado
+  final Jogos jogo;
 
   const JogoEditPage({super.key, required this.jogo});
 
@@ -20,7 +20,6 @@ class _JogoEditPageState extends State<JogoEditPage> {
   @override
   void initState() {
     super.initState();
-    // Preencha os campos com os valores atuais
     _nomeController = TextEditingController(text: widget.jogo.nJogo);
     _empresaController = TextEditingController(text: widget.jogo.nEmpresa);
     _plataformaController = TextEditingController(
@@ -170,15 +169,15 @@ class _JogoEditPageState extends State<JogoEditPage> {
   }
 
   Future<void> _selectData() async {
-    DateTime? _ano = await showDatePicker(
+    DateTime? ano = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
       firstDate: DateTime(1950),
       lastDate: DateTime.now(),
     );
-    if (_ano != null) {
+    if (ano != null) {
       setState(() {
-        _anoController.text = _ano.year.toString();
+        _anoController.text = ano.year.toString();
       });
     }
   }

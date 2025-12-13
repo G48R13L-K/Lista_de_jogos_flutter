@@ -178,7 +178,7 @@ class _MyHomePageState extends State<MyHomePage> {
           baseUrl: 'https://6912666252a60f10c8218ad9.mockapi.io/api/v1',
         ),
       );
-      await dio.delete('/lista_jogos/${jogo.id}'); // DELETE usando o ID
+      await dio.delete('/lista_jogos/${jogo.id}');
 
       setState(() {
         jogos.removeAt(index);

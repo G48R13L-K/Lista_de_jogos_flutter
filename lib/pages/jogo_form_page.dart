@@ -18,7 +18,7 @@ class _JogoFormPageState extends State<JogoFormPage> {
   late TextEditingController controllerPlataforma;
   late TextEditingController controllerNota;
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
-  bool isSaving = false; // Para desabilitar o botão durante salvamento
+  bool isSaving = false;
 
   @override
   void initState() {
@@ -35,8 +35,7 @@ class _JogoFormPageState extends State<JogoFormPage> {
       controllerEmpresa.text = jogo.nEmpresa;
       controllerPlataforma.text = jogo.nPlataforma;
       controllerNota.text = jogo.notaJogo.toString();
-      controllerAno.text = jogo.anoJogo
-          .toString(); // Converta para string para o controller
+      controllerAno.text = jogo.anoJogo.toString();
     }
   }
 
@@ -177,7 +176,7 @@ class _JogoFormPageState extends State<JogoFormPage> {
     var empresaNome = controllerEmpresa.text;
     var plataformaJogo = controllerPlataforma.text;
     var notaParaJogo = int.tryParse(controllerNota.text) ?? 0;
-    var anoJogo = int.tryParse(controllerAno.text) ?? 0; // Converta para int
+    var anoJogo = int.tryParse(controllerAno.text) ?? 0;
 
     if (formKey.currentState?.validate() == true) {
       setState(() {
@@ -194,7 +193,6 @@ class _JogoFormPageState extends State<JogoFormPage> {
 
         Response response;
         if (widget.jogo == null) {
-          // Adicionar novo jogo (POST)
           response = await dio.post(
             "/lista_jogos",
             data: {
@@ -206,7 +204,6 @@ class _JogoFormPageState extends State<JogoFormPage> {
             },
           );
         } else {
-          // Editar jogo existente (PUT)
           response = await dio.put(
             "/lista_jogos/${widget.jogo!.id}",
             data: {
@@ -230,7 +227,7 @@ class _JogoFormPageState extends State<JogoFormPage> {
                 ),
               ),
             );
-            Navigator.pop(ctx); // Volte para a lista
+            Navigator.pop(ctx);
           } else {
             ScaffoldMessenger.of(ctx).showSnackBar(
               SnackBar(
@@ -256,15 +253,15 @@ class _JogoFormPageState extends State<JogoFormPage> {
   }
 
   Future<void> _selectData() async {
-    DateTime? _ano = await showDatePicker(
+    DateTime? ano = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
       firstDate: DateTime(1950),
       lastDate: DateTime.now(),
     );
-    if (_ano != null) {
+    if (ano != null) {
       setState(() {
-        controllerAno.text = _ano.year.toString();
+        controllerAno.text = ano.year.toString();
       });
     }
   }
